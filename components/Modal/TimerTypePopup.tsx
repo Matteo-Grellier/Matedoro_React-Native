@@ -19,30 +19,42 @@ export default function (props: popupProps) {
 	};
 
 	return (
-		<Modal visible={props.isModalVisible}>
-			<View
-				style={{
-					display: "flex",
-					flex: 1,
-					alignItems: "center",
-				}}
-			>
-				<ChangeTimerType
-					buttonText="25min / 5min"
-					onPress={changeType25}
-				/>
-				<ChangeTimerType
-					buttonText="45min / 15min"
-					onPress={changeType5}
-				/>
-			</View>
+		<Modal animationType="slide" transparent={true} visible={props.isModalVisible}>
+			<View style={{
+				backgroundColor: "grey",
+				width: "100%",
+				height: "50%",
+				bottom: 0,
+				borderTopRightRadius: 18,
+				borderTopLeftRadius: 18,
+				position: "absolute"
+			}}>
+				<View
+					style={{
+						flex: 1,
+						display: "flex",
+						alignItems: "center",
+						backgroundColor: "grey",
+						borderRadius: 50
+					}}
+				>
+					<ChangeTimerType
+						buttonText="25min / 5min"
+						onPress={changeType25}
+					/>
+					<ChangeTimerType
+						buttonText="45min / 15min"
+						onPress={changeType5}
+					/>
+					<View style={{ position: "absolute", top: 350, left: 300 }}>
+						<OpenCloseButton
+							onPress={handleModal}
+							component={<MinusIcon size={30} color={"black"} />}
+						/>
+					</View>
 
-			<View>
-				<OpenCloseButton
-					onPress={handleModal}
-					component={<MinusIcon size={30} color={"black"} />}
-				/>
+				</View>
 			</View>
-		</Modal>
+		</Modal >
 	);
 }

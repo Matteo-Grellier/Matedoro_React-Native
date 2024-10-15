@@ -40,10 +40,13 @@ export default function Index() {
 				isModalVisible={isModalVisible}
 				setModalVisible={setModalVisible}
 			></TimerTypePopup>
-			<OpenCloseButton
-				onPress={() => setModalVisible(!isModalVisible)}
-				component={<PlusIcon size={30} color={"black"} />}
-			></OpenCloseButton>
+			<View style={{ position: "absolute", top: 750, left: 300 }}>
+				<OpenCloseButton
+					onPress={() => setModalVisible(!isModalVisible)}
+					component={<PlusIcon size={30} color={"black"} />}
+				></OpenCloseButton>
+			</View>
+
 		</View>
 	);
 }

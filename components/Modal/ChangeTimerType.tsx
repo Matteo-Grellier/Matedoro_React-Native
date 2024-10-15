@@ -17,7 +17,7 @@ export default function (props: Props) {
 					justifyContent: "center",
 					paddingRight: 30,
 					paddingLeft: 30,
-					top: 300,
+					top: 100,
 					right: 0,
 					height: 70,
 					backgroundColor: "white",

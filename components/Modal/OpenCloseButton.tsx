@@ -16,9 +16,6 @@ export default function (props: Props) {
 					alignItems: "center",
 					justifyContent: "center",
 					width: 70,
-					position: "absolute",
-					top: -150,
-					right: 0,
 					height: 70,
 					backgroundColor: "white",
 					borderRadius: 20,
@@ -34,9 +31,4 @@ export default function (props: Props) {
 	);
 }
 const styles = StyleSheet.create({
-	popupButtonContainer: {
-		position: "absolute",
-		paddingLeft: 300,
-		backgroundColor: "black",
-	},
 });
