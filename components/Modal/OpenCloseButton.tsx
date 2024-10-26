@@ -2,13 +2,13 @@ import { PlusIcon } from "lucide-react-native";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 
 type Props = {
-	onPress: () => void;
+	onPress?: () => void;
 	component: React.ReactNode;
 };
 
 export default function (props: Props) {
 	return (
-		<View style={styles.popupButtonContainer}>
+		<View>
 			<TouchableOpacity
 				style={{
 					borderWidth: 1,
@@ -30,5 +30,3 @@ export default function (props: Props) {
 		</View>
 	);
 }
-const styles = StyleSheet.create({
-});

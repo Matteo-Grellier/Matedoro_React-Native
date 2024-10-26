@@ -1,7 +1,9 @@
 import { Modal, View, Text, Button } from "react-native";
-import { MinusIcon, PlusIcon } from "lucide-react-native";
+import { ArrowDown, MinusIcon, PlusIcon } from "lucide-react-native";
 import ChangeTimerType from "./ChangeTimerType";
 import OpenCloseButton from "./OpenCloseButton";
+import { PomodoroContext } from "@/providers/PomodoroProvider";
+import { useContext } from "react";
 
 type popupProps = {
 	isModalVisible: boolean;
@@ -10,12 +12,17 @@ type popupProps = {
 
 export default function (props: popupProps) {
 	const handleModal = () => props.setModalVisible(!props.isModalVisible);
+	const { setTimeLeft, setIsLong, createNewSession } = useContext(PomodoroContext);
+
 	const changeType25 = () => {
-		console.log("change type 25");
+		// createNewSession(1500000, 300000)
+		createNewSession(5000, 3000)
+		setIsLong(false)
 	};
 
-	const changeType5 = () => {
-		console.log("change type 5");
+	const changeType45 = () => {
+		createNewSession(2700000, 900000)
+		setIsLong(true)
 	};
 
 	return (
@@ -35,18 +42,20 @@ export default function (props: popupProps) {
 						display: "flex",
 						alignItems: "center",
 						backgroundColor: "grey",
-						borderRadius: 50
+						borderRadius: 50,
 					}}
 				>
-					<ChangeTimerType
-						buttonText="25min / 5min"
-						onPress={changeType25}
-					/>
-					<ChangeTimerType
-						buttonText="45min / 15min"
-						onPress={changeType5}
-					/>
-					<View style={{ position: "absolute", top: 350, left: 300 }}>
+					<View style={{ top: -50 }}>
+						<ChangeTimerType
+							buttonText="25min / 5min"
+							onPress={changeType25}
+						/>
+						<ChangeTimerType
+							buttonText="45min / 15min"
+							onPress={changeType45}
+						/>
+					</View>
+					<View style={{ position: "absolute", top: 300, left: 300 }}>
 						<OpenCloseButton
 							onPress={handleModal}
 							component={<MinusIcon size={30} color={"black"} />}

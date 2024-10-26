@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Text, StyleSheet, View } from "react-native";
-import { PlayButton } from "./PlayButton";
 import { Cycle } from "./Cycle";
 import { Timer } from "./Timer";
 import { useTimer } from "@/hooks/useTimer";
+import { PomodoroContext } from "@/providers/PomodoroProvider";
 
 let breakTime = 3000;
 let workTime = 5000;
@@ -22,47 +22,19 @@ type TUseTimer = {
 	seconds: string;
 };
 
-// Appeler useTimer + un tableau de cycle [0,WORK or BREAK]
-enum PomodoroState {
-	FOCUS,
-	PAUSE,
-	NONE,
-}
+
 
 export function Pomodoro(props: pomodoroProps) {
-	const [numberOfCycles, setNumberOfCycles] = useState(3);
-	//truc qui cloche ici
-	const { timer, setTimer, time } = useTimer(5000, props.onClick);
-	const [pomodoroState, setPomodoroState] = useState<PomodoroState>(
-		PomodoroState.FOCUS,
-	);
-
-	useEffect(() => {
-		console.log(numberOfCycles);
-		if (numberOfCycles == 4) {
-			console.log("ZFZFZ");
-			setNumberOfCycles(0);
-		}
-		if (timer == 0 && pomodoroState == PomodoroState.FOCUS) {
-			console.log("FOCUS");
-			setTimer(5000);
-			setPomodoroState(PomodoroState.PAUSE);
-		} else if (timer == 0 && pomodoroState == PomodoroState.PAUSE) {
-			console.log("PAUSE");
-			setTimer(3000);
-			setPomodoroState(PomodoroState.FOCUS);
-			setNumberOfCycles(numberOfCycles + 1);
-		}
-	}, [timer]);
+	const { cycleNumber, timeLeft, pomodoroState } = useContext(PomodoroContext);
 
 	return (
 		<View>
 			<Timer
 				buttonClickState={props.onClick}
-				timer={time}
+				timer={timeLeft}
 				pomodoroState={pomodoroState}
 			/>
-			<Cycle numberOfCycle={numberOfCycles} state={pomodoroState} />
+			<Cycle />
 		</View>
 	);
 }

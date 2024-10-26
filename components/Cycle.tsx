@@ -1,3 +1,4 @@
+import { PomodoroContext } from "@/providers/PomodoroProvider";
 import {
 	DiamondIcon,
 	Fullscreen,
@@ -8,7 +9,7 @@ import {
 	Square,
 	SquareIcon,
 } from "lucide-react-native";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
 	StyleSheet,
 	Button,
@@ -25,15 +26,11 @@ enum PomodoroState {
 	NONE,
 }
 
-type CycleProps = {
-	numberOfCycle: number;
-	state: PomodoroState;
-};
 
-export function Cycle(props: CycleProps) {
-	useEffect(() => {
-		console.log("cycles " + props.numberOfCycle);
-	}, [props.numberOfCycle]);
+
+export function Cycle() {
+	const { cycleNumber, pomodoroState } = useContext(PomodoroContext);
+
 	let listOfCycle = [];
 	for (let i = 0; i < 4; i++) {
 		listOfCycle.push(
@@ -42,9 +39,9 @@ export function Cycle(props: CycleProps) {
 				color={"red"}
 				size={10}
 				style={
-					(props.state = PomodoroState.FOCUS || PomodoroState.PAUSE)
+					(pomodoroState == PomodoroState.FOCUS || PomodoroState.PAUSE)
 						? styles.square
-						: props.numberOfCycle >= i
+						: cycleNumber >= i
 							? styles.fullDiamond
 							: styles.diamond
 				}
@@ -63,25 +60,25 @@ export function Cycle(props: CycleProps) {
 						color={"red"}
 						size={10}
 						fill={
-							(props.state =
+							(pomodoroState ==
 								PomodoroState.FOCUS || PomodoroState.PAUSE) &&
-							props.numberOfCycle > key
+								cycleNumber > key
 								? "red"
-								: (props.state =
-											PomodoroState.FOCUS ||
-											PomodoroState.PAUSE) &&
-									  props.numberOfCycle == key
+								: (pomodoroState ==
+									PomodoroState.FOCUS ||
+									PomodoroState.PAUSE) &&
+									cycleNumber == key
 									? "black"
 									: "white"
 						}
 						style={
-							(props.state =
+							(pomodoroState ==
 								PomodoroState.FOCUS || PomodoroState.PAUSE) &&
-							props.numberOfCycle > key
+								cycleNumber > key
 								? styles.fullDiamond
-								: key <= props.numberOfCycle
+								: key <= cycleNumber
 									? styles.square
-									: props.numberOfCycle == key
+									: cycleNumber == key
 										? styles.square
 										: styles.diamond
 						}

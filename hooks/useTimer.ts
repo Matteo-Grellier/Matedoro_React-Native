@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { StyleSheet, View, Text } from "react-native";
-type TUseTimer = {
+export type TUseTimer = {
 	minutes: string;
 	seconds: string;
 };
@@ -8,8 +8,6 @@ type TUseTimer = {
 const HOURS_IN_MS = 1000 * 60 * 60;
 const MIN_IN_MS = 1000 * 60;
 const SEC_IN_MS = 1000;
-
-// Définir un props booléen : si bouton appuyer lancer le compteur
 
 const formatNumber = (num: number) => {
 	return num < 10 ? `0${num}` : `${num}`;
@@ -27,40 +25,64 @@ const getTimeDiff = (diffInMSec: number): TUseTimer => {
 		seconds: formatNumber(seconds),
 	};
 };
-export function useTimer(
-	value: number,
-	buttonClicked: boolean,
-): {
-	time: TUseTimer;
-	timer: number;
-	setTimer(timer: number): void;
+
+export function useTimer(onTimerEnd?: () => void): {
+	timeLeft: TUseTimer;
+	setTimeLeft(timer: number): void;
+	startTimer(): void;
+	stopTimer(): void;
+	timerOver(): void;
 } {
-	function setTimer(timer: number) {
-		setTimeLeft(timer);
+	const [timeLeft, setTimeLeft] = useState(15000);
+	const [isRunning, setIsRunning] = useState(false);
+
+	const timerOver = () => {
+		if (onTimerEnd) {
+			onTimerEnd();
+		}
 	}
-	const [timeLeft, setTimeLeft] = useState(value);
-	let coucou = timeLeft;
+
+	// Fonction pour démarrer le timer
+	const startTimer = useCallback(() => {
+		setIsRunning(true);
+	}, []);
+
+	// Fonction pour arrêter le timer
+	const stopTimer = useCallback(() => {
+		setIsRunning(false);
+	}, []);
 
 	useEffect(() => {
-		const id = setInterval(() => {
-			coucou -= 1000;
-			setTimeLeft((prev) => prev - 1000);
-			if (coucou <= 0) {
-			}
-		}, 1000);
+		if (isRunning) {
 
-		if (!buttonClicked) {
-			clearTimeout(id);
+			const id = setInterval(() => {
+				setTimeLeft((prev) => {
+					if (prev <= 1000) {
+						timerOver();
+					}
+					return prev - 1000;
+				});
+			}, 1000);
+
+			// Nettoyage pour éviter les fuites de mémoire
+			return () => clearInterval(id);
 		}
+	}, [isRunning]);
 
-		return () => {
-			clearTimeout(id);
-		};
-	}, [buttonClicked]);
+	// useEffect(() => {
+	// 	if (timeLeft === 0 && isRunning) {
+	// 		setIsRunning(false); // Stop the timer if it reaches zero
+	// 		if (onEnd) {
+	// 			onEnd(); // Trigger the callback when timer ends
+	// 		}
+	// 	}
+	// }, [timeLeft, isRunning, onEnd]);
 
 	return {
-		time: getTimeDiff(timeLeft),
-		timer: coucou,
-		setTimer,
+		timeLeft: getTimeDiff(timeLeft),
+		setTimeLeft,
+		startTimer,
+		stopTimer,
+		timerOver,
 	};
 }
