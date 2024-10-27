@@ -1,24 +1,28 @@
 import { PomodoroContext } from "@/providers/PomodoroProvider";
 import { PauseIcon, PlayIcon } from "lucide-react-native";
-import React, { useCallback, useContext, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
 	StyleSheet, Pressable
 } from "react-native";
 
 export default function () {
-	const [isClicked, setIsClicked] = useState(false);
-	const { startTimer, stopTimer } = useContext(PomodoroContext);
+	const { startTimer, stopTimer, isRunning, isSessionEnded, setIsRunning } = useContext(PomodoroContext);
+
 	const toggleButton = useCallback(() => {
-		if (isClicked) {
+		if (isRunning) {
+			setIsRunning(false);
 			stopTimer();
 		} else {
+			setIsRunning(true);
 			startTimer();
 		}
-		setIsClicked(prevState => !prevState);
-	}, [isClicked, startTimer, stopTimer]);
+	}, [isRunning, startTimer, stopTimer]);
+
+
+
 	return (
 		<Pressable style={styles.Button} onPress={toggleButton}>
-			{isClicked ? (
+			{isRunning ? (
 				<PauseIcon size={40} color={"black"} />
 			) : (
 				<PlayIcon size={40} color={"black"} />

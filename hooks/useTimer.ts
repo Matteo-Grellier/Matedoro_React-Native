@@ -28,12 +28,14 @@ const getTimeDiff = (diffInMSec: number): TUseTimer => {
 
 export function useTimer(onTimerEnd?: () => void): {
 	timeLeft: TUseTimer;
+	elapsedTime: TUseTimer;
 	setTimeLeft(timer: number): void;
 	startTimer(): void;
 	stopTimer(): void;
 	timerOver(): void;
 } {
-	const [timeLeft, setTimeLeft] = useState(15000);
+	const [timeLeft, setTimeLeft] = useState(1500000);
+	const [elapsedTime, setElapsedTime] = useState(0);
 	const [isRunning, setIsRunning] = useState(false);
 
 	const timerOver = () => {
@@ -62,7 +64,8 @@ export function useTimer(onTimerEnd?: () => void): {
 					}
 					return prev - 1000;
 				});
-			}, 1000);
+				setElapsedTime((prev) => prev + 1000);
+			}, 300);
 
 			// Nettoyage pour éviter les fuites de mémoire
 			return () => clearInterval(id);
@@ -80,6 +83,7 @@ export function useTimer(onTimerEnd?: () => void): {
 
 	return {
 		timeLeft: getTimeDiff(timeLeft),
+		elapsedTime: getTimeDiff(elapsedTime),
 		setTimeLeft,
 		startTimer,
 		stopTimer,

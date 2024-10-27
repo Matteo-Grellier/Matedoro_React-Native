@@ -15,8 +15,8 @@ export default function (props: popupProps) {
 	const { setTimeLeft, setIsLong, createNewSession } = useContext(PomodoroContext);
 
 	const changeType25 = () => {
-		// createNewSession(1500000, 300000)
-		createNewSession(5000, 3000)
+		createNewSession(1500000, 300000)
+		// createNewSession(5000, 3000)
 		setIsLong(false)
 	};
 

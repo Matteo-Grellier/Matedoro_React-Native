@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import OldCycle from './OldCycle';
 import { PomodoroContext } from '@/providers/PomodoroProvider';
+import { PomodoroService, PomodoroSession } from '@/services/PomodoroService';
 
 // Get the device width
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -18,12 +19,24 @@ type Props = {
 	visible: boolean
 }
 
+
 const SlideSidebar = (props: Props) => {
 	const [isSidebarOpen, setSidebarOpen] = useState(false);
 	const sidebarAnim = useRef(new Animated.Value(-SCREEN_WIDTH)).current;
-	const { completedSessions, createNewSession, endSession } = useContext(PomodoroContext);
+	const { completedSessions, createNewSession, endSession, isSessionEnded } = useContext(PomodoroContext);
+	const [session, setSession] = useState<PomodoroSession[]>([]);
 
 	useEffect(() => {
+		const getAllCycles = async () => {
+			const ahah = await PomodoroService.getSessions()
+			setSession(ahah);
+		}
+		getAllCycles()
+
+	}, [isSessionEnded, endSession])
+
+	useEffect(() => {
+
 
 		if (props.visible) {
 			// Close the sidebar
@@ -43,6 +56,8 @@ const SlideSidebar = (props: Props) => {
 		setSidebarOpen(!props.visible);
 	})
 
+
+
 	return (
 		<View style={styles.container}>
 			<Animated.View
@@ -52,12 +67,12 @@ const SlideSidebar = (props: Props) => {
 				]}
 			>
 				<ScrollView contentContainerStyle={styles.scrollViewContent}>
-					{completedSessions.map((session, index) => (
+					{session.map((session, index) => (
 						<OldCycle
 							key={index}
 							workTime={session.workTime}
 							sessions={session.sessions}
-							date={session.date}
+							date=""
 						/>
 					))}
 					{/* You can add as many <OldCycle /> components as you like */}

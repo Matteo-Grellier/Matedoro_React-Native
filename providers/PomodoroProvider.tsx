@@ -3,7 +3,7 @@ import { ReactNode, createContext, useCallback, useEffect, useState } from "reac
 import * as Notifications from 'expo-notifications';
 import { Platform, Vibration } from "react-native";
 import { Audio } from 'expo-av';
-
+import { PomodoroSession, PomodoroService } from "@/services/PomodoroService";
 
 type CompletedSession = {
 	workTime: string;
@@ -25,18 +25,14 @@ type PomodoroProviderState = {
 	setTimeLeft: (time: number) => void;
 	endSession: () => void;
 	completedSessions: CompletedSession[]; // Array
+	isSessionEnded: boolean;
+	setIsRunning: (bool: boolean) => void;
 };
 
-// Appeler useTimer + un tableau de cycle [0,WORK or BREAK]
 enum PomodoroState {
 	FOCUS,
 	PAUSE,
 	NONE,
-}
-
-enum cycleType {
-	LONG,
-	SHORT
 }
 
 const initialState: PomodoroProviderState = {
@@ -51,7 +47,14 @@ const initialState: PomodoroProviderState = {
 	stopTimer: () => { },
 	setTimeLeft: (timer: number) => { },
 	endSession: () => { },
-	completedSessions: []
+	completedSessions: [],
+	isSessionEnded: false,
+	setIsRunning: (bool: boolean) => { }
+}
+
+enum cycleType {
+	LONG,
+	SHORT
 }
 
 export const PomodoroContext = createContext<PomodoroProviderState>(initialState);
@@ -69,21 +72,23 @@ Notifications.setNotificationHandler({
 	}),
 })
 
-
 export const PomodoroProvider = ({ children }: PomodoroProviderProps) => {
 	const [isRunning, setIsRunning] = useState(false);
 	const [isFocus, setIsFocus] = useState(true);
-	const [cyclePauseTime, setCyclePauseTime] = useState(3000)
-	const [cycleFocusTime, setCycleFocusTime] = useState(5000)
-	const [cycleNumber, setCycleNumber] = useState(3);
-	const [totalCycleNumber, setTotalCycleNumber] = useState(6);
+	const [cyclePauseTime, setCyclePauseTime] = useState(1500000)
+	const [cycleFocusTime, setCycleFocusTime] = useState(300000)
+	const [cycleNumber, setCycleNumber] = useState(0);
+	const [totalCycleNumber, setTotalCycleNumber] = useState(0);
 	const [isLong, setIsLong] = useState(false);
+	const [isSessionEnded, setIsSessionEnded] = useState(false);
 	const [pomodoroState, setPomodoroState] = useState<PomodoroState>(
 		PomodoroState.FOCUS,
 	);
 	const [completedSessions, setCompletedSessions] = useState<
 		{ workTime: string; sessions: number; date: string }[]
 	>([]);
+	const [totalWorkMinutes, setTotalWorkMinutes] = useState(0); // Track total
+
 
 	const customSound = require('/home/lanayr/Downloads/Matedoro_React-Native/assets/sounds/notification-sound-1-253323.mp3');
 
@@ -118,18 +123,37 @@ export const PomodoroProvider = ({ children }: PomodoroProviderProps) => {
 	};
 
 	const totalWorkTime = () => {
-		// Total focus time in minutes: multiply cycle time by total number of cycles (in milliseconds)
-		const totalFocusMinutes = Math.floor((cycleFocusTime / 1000 / 60) * totalCycleNumber);
-		console.log("ttcn" + (cycleFocusTime / 1000 / 60));
-		console.log("focustime" + cycleFocusTime);
-		// Convert total focus minutes to hours and remaining minutes
-		const totalHours = Math.floor(totalFocusMinutes / 60);
-		const remainingMinutes = totalFocusMinutes % 60;
+		// Convert `cycleFocusTime` and `elapsedTime` into minutes for calculation.
+		const focusTimePerCycleMinutes = cycleFocusTime / 60000; // cycleFocusTime in ms to minutes
+		const totalElapsedMinutes = parseInt(elapsedTime.minutes) + parseInt(elapsedTime.seconds) / 60;
 
-		// Format result as "Xh Ym"
-		return `${totalHours}h ${remainingMinutes}m`;
+		// Total work time is the sum of full cycle work time plus current elapsed time.
+		const totalMinutes = totalCycleNumber * focusTimePerCycleMinutes + totalElapsedMinutes;
+
+		// Format the result as hours and minutes.
+		return `${Math.floor(totalMinutes / 60)}h ${Math.round(totalMinutes % 60)}m`;
 	};
 
+
+	const addToHistory = () => {
+		const currentDate = new Date().toLocaleDateString();
+		const workTime = totalWorkTime(); // Replace with actual work time from your timer.
+		const sessionsCount = totalCycleNumber;
+		setIsSessionEnded(false); // Reset on new session
+		playNotificationSound();
+		// Add the completed session to the state array.
+		setCompletedSessions((prev) => [
+			...prev,
+			{ workTime, sessions: sessionsCount, date: currentDate },
+		]);
+		const session: PomodoroSession = {
+			workTime,
+			sessions: sessionsCount,
+			date: currentDate,
+		};
+		PomodoroService.addSession(session)
+		setTotalWorkMinutes(0); // Reset
+	}
 
 	const createNewSession = (cycleFocusTime: number, cyclePausesTime: number) => {
 		// Reset all the states to start a new Pomodoro session.
@@ -141,27 +165,26 @@ export const PomodoroProvider = ({ children }: PomodoroProviderProps) => {
 		setTimeLeft(cycleFocusTime); // Set the initial focus time.
 		setIsRunning(false); // Make sure the timer is not running until user starts it.
 		sendNotification("New Pomodoro Session!", "A new Pomodoro session has started! Get ready to focus.");
-		const currentDate = new Date().toLocaleDateString();
-		const workTime = totalWorkTime(); // Replace with actual work time from your timer.
-		const sessionsCount = totalCycleNumber;
-		playNotificationSound();
-		// Add the completed session to the state array.
-		setCompletedSessions((prev) => [
-			...prev,
-			{ workTime, sessions: sessionsCount, date: currentDate },
-		]);
+		addToHistory()
 		setTotalCycleNumber(0);
 	};
 
 	const endSession = () => {
+
+		if (pomodoroState === PomodoroState.FOCUS) {
+			// If in a focus cycle, calculate the worked time in the current cycle
+			const focusTimeWorked = (cycleFocusTime - (parseInt(timeLeft.minutes) * 60 + parseInt(timeLeft.seconds))) / 60;
+			setTotalWorkMinutes((prev) => prev + focusTimeWorked);
+		}
 		// Stop the timer and reset the states when ending the session.
-		console.log("WT2")
-		stopTimer();
 		setIsRunning(false);
-		setPomodoroState(PomodoroState.NONE); // Set the state to NONE to indicate no ongoing session.
-		setTimeLeft(0); // Reset the timer display.
+		setCycleNumber(0);
+		setPomodoroState(PomodoroState.FOCUS); // Set the state to NONE to indicate no ongoing session.
+		setTimeLeft(cycleFocusTime)
+		stopTimer();
+		addToHistory();
 		sendNotification("Pomodoro Session Ended", "Great work! You have completed the Pomodoro session.");
-		Vibration.vibrate(2000); // Give the user feedback that the session has ended.
+		setIsSessionEnded(true); // Set session ended to true
 	};
 
 	const handleCycleNumber = () => {
@@ -173,10 +196,12 @@ export const PomodoroProvider = ({ children }: PomodoroProviderProps) => {
 		}
 	}
 
-	const { setTimeLeft, startTimer, stopTimer, timeLeft, timerOver } = useTimer();
+	const { setTimeLeft, startTimer, stopTimer, timeLeft, timerOver, elapsedTime } = useTimer();
 
 	const onTimerUpdate = useCallback(() => {
 		if (isFocus) {
+			const focusTimeWorked = (cycleFocusTime - (parseInt(timeLeft.minutes) * 60 + parseInt(timeLeft.seconds))) / 60;
+			setTotalWorkMinutes((prev) => prev + focusTimeWorked);
 			setPomodoroState(PomodoroState.PAUSE);
 			setIsFocus(false);
 			setTimeLeft(cyclePauseTime);
@@ -193,7 +218,7 @@ export const PomodoroProvider = ({ children }: PomodoroProviderProps) => {
 			Vibration.vibrate(2000)
 		}
 		startTimer();
-	}, [isFocus, cyclePauseTime, cycleFocusTime, startTimer]);
+	}, [isFocus, cyclePauseTime, cycleFocusTime, startTimer, timeLeft]);
 
 	// Utiliser useEffect pour déclencher onTimerUpdate quand le timer est terminé
 	useEffect(() => {
@@ -219,7 +244,9 @@ export const PomodoroProvider = ({ children }: PomodoroProviderProps) => {
 				pomodoroState,
 				createNewSession,
 				endSession,
-				completedSessions
+				completedSessions,
+				isSessionEnded,
+				setIsRunning
 			}}
 		>
 			{children}
