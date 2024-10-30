@@ -58,7 +58,6 @@ export default function (props: popupProps) {
 							component={<MinusIcon size={30} color={"black"} />}
 						/>
 					</View>
-
 				</View>
 			</View>
 		</Modal >

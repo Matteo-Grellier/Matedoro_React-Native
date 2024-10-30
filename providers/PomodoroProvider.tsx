@@ -90,7 +90,7 @@ export const PomodoroProvider = ({ children }: PomodoroProviderProps) => {
 	const [totalWorkMinutes, setTotalWorkMinutes] = useState(0); // Track total
 
 
-	const customSound = require('/home/lanayr/Downloads/Matedoro_React-Native/assets/sounds/notification-sound-1-253323.mp3');
+	const customSound = require('../assets/sounds/notification-sound-1-253323.mp3');
 
 	const requestPermissions = async () => {
 		const { status } = await Notifications.requestPermissionsAsync();
