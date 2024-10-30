@@ -3,12 +3,12 @@ import { ReactNode, createContext, useCallback, useEffect, useState } from "reac
 import * as Notifications from 'expo-notifications';
 import { Platform, Vibration } from "react-native";
 import { Audio } from 'expo-av';
-import { PomodoroSession, PomodoroService } from "@/services/PomodoroService";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type CompletedSession = {
 	workTime: string;
 	sessions: number;
-	date: string;
+	date: Date;
 };
 
 
@@ -75,8 +75,8 @@ Notifications.setNotificationHandler({
 export const PomodoroProvider = ({ children }: PomodoroProviderProps) => {
 	const [isRunning, setIsRunning] = useState(false);
 	const [isFocus, setIsFocus] = useState(true);
-	const [cyclePauseTime, setCyclePauseTime] = useState(1500000)
-	const [cycleFocusTime, setCycleFocusTime] = useState(300000)
+	const [cyclePauseTime, setCyclePauseTime] = useState(150000)
+	const [cycleFocusTime, setCycleFocusTime] = useState(30000)
 	const [cycleNumber, setCycleNumber] = useState(0);
 	const [totalCycleNumber, setTotalCycleNumber] = useState(0);
 	const [isLong, setIsLong] = useState(false);
@@ -85,7 +85,7 @@ export const PomodoroProvider = ({ children }: PomodoroProviderProps) => {
 		PomodoroState.FOCUS,
 	);
 	const [completedSessions, setCompletedSessions] = useState<
-		{ workTime: string; sessions: number; date: string }[]
+		{ workTime: string; sessions: number; date: Date }[]
 	>([]);
 	const [totalWorkMinutes, setTotalWorkMinutes] = useState(0); // Track total
 
@@ -100,6 +100,7 @@ export const PomodoroProvider = ({ children }: PomodoroProviderProps) => {
 	};
 
 	useEffect(() => {
+		// clearHistory();
 		requestPermissions();
 	}, []);
 
@@ -123,36 +124,79 @@ export const PomodoroProvider = ({ children }: PomodoroProviderProps) => {
 	};
 
 	const totalWorkTime = () => {
-		// Convert `cycleFocusTime` and `elapsedTime` into minutes for calculation.
+		// Convert `cycleFocusTime` and `elapsedTime` into minutes and seconds for calculation.
 		const focusTimePerCycleMinutes = cycleFocusTime / 60000; // cycleFocusTime in ms to minutes
-		const totalElapsedMinutes = parseInt(elapsedTime.minutes) + parseInt(elapsedTime.seconds) / 60;
+		const totalElapsedMinutes = parseInt(elapsedTime.minutes);
+		const totalElapsedSeconds = parseInt(elapsedTime.seconds);
 
-		// Total work time is the sum of full cycle work time plus current elapsed time.
+		// Total work time in minutes and seconds
 		const totalMinutes = totalCycleNumber * focusTimePerCycleMinutes + totalElapsedMinutes;
+		const totalSeconds = totalMinutes * 60 + totalElapsedSeconds; // convert everything to seconds for accuracy
 
-		// Format the result as hours and minutes.
-		return `${Math.floor(totalMinutes / 60)}h ${Math.round(totalMinutes % 60)}m`;
+		// Format the result as hours, minutes, and seconds.
+		const hours = Math.floor(totalSeconds / 3600);
+		const minutes = Math.floor((totalSeconds % 3600) / 60);
+		const seconds = Math.round(totalSeconds % 60);
+
+		return `${hours}h ${minutes}m ${seconds}s`;
 	};
 
-
-	const addToHistory = () => {
-		const currentDate = new Date().toLocaleDateString();
-		const workTime = totalWorkTime(); // Replace with actual work time from your timer.
-		const sessionsCount = totalCycleNumber;
-		setIsSessionEnded(false); // Reset on new session
-		playNotificationSound();
-		// Add the completed session to the state array.
-		setCompletedSessions((prev) => [
-			...prev,
-			{ workTime, sessions: sessionsCount, date: currentDate },
-		]);
-		const session: PomodoroSession = {
-			workTime,
-			sessions: sessionsCount,
-			date: currentDate,
+	useEffect(() => {
+		const loadSessions = async () => {
+			try {
+				const storedSessions = await AsyncStorage.getItem('completedSessions');
+				if (storedSessions) {
+					setCompletedSessions(JSON.parse(storedSessions));
+				}
+			} catch (error) {
+				console.error('Failed to load sessions from storage:', error);
+			}
 		};
-		PomodoroService.addSession(session)
-		setTotalWorkMinutes(0); // Reset
+		loadSessions();
+	}, []);
+
+	const clearHistory = async () => {
+		try {
+			await AsyncStorage.removeItem('completedSessions');
+			setCompletedSessions([]);
+			console.log('Session history cleared.');
+		} catch (error) {
+			console.error('Failed to clear session history:', error);
+		}
+	};
+
+	const addToHistory = async () => {
+		try {
+			const currentDate = new Date();
+			const workTime = totalWorkTime(); // Replace with actual work time from your timer.
+			const sessionsCount = totalCycleNumber;
+			setIsSessionEnded(false); // Reset on new session
+			playNotificationSound();
+			// Add the completed session to the state array.
+			setCompletedSessions((prev) => [
+				...prev,
+				{ workTime, sessions: sessionsCount, date: currentDate },
+			]);
+			// Create a new session object
+			const session = {
+				workTime,
+				sessions: sessionsCount,
+				date: currentDate,
+			};
+
+			const existingSessions = await AsyncStorage.getItem('completedSessions');
+			const parsedSessions = existingSessions ? JSON.parse(existingSessions) : [];
+
+			// Update the sessions array and save it to AsyncStorage
+			const updatedSessions = [...parsedSessions, session];
+			await AsyncStorage.setItem('completedSessions', JSON.stringify(updatedSessions));
+
+			setCompletedSessions(updatedSessions);
+
+			setTotalWorkMinutes(0); // Reset
+		} catch (error) {
+			console.error('Error saving session history:', error);
+		}
 	}
 
 	const createNewSession = (cycleFocusTime: number, cyclePausesTime: number) => {
@@ -178,6 +222,7 @@ export const PomodoroProvider = ({ children }: PomodoroProviderProps) => {
 		}
 		// Stop the timer and reset the states when ending the session.
 		setIsRunning(false);
+		setIsFocus(true);
 		setCycleNumber(0);
 		setPomodoroState(PomodoroState.FOCUS); // Set the state to NONE to indicate no ongoing session.
 		setTimeLeft(cycleFocusTime)

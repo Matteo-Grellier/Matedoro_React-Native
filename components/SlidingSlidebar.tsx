@@ -10,53 +10,43 @@ import {
 } from 'react-native';
 import OldCycle from './OldCycle';
 import { PomodoroContext } from '@/providers/PomodoroProvider';
-import { PomodoroService, PomodoroSession } from '@/services/PomodoroService';
+import OpenCloseButton from './Modal/OpenCloseButton';
+import { ArrowLeft } from 'lucide-react-native';
 
 // Get the device width
 const SCREEN_WIDTH = Dimensions.get('window').width;
+const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 type Props = {
 	visible: boolean
+	setVisible: (visible: boolean) => void
 }
-
 
 const SlideSidebar = (props: Props) => {
 	const [isSidebarOpen, setSidebarOpen] = useState(false);
 	const sidebarAnim = useRef(new Animated.Value(-SCREEN_WIDTH)).current;
 	const { completedSessions, createNewSession, endSession, isSessionEnded } = useContext(PomodoroContext);
-	const [session, setSession] = useState<PomodoroSession[]>([]);
+
+	const onCloseSidebar = () => {
+		props.setVisible(true);
+	}
 
 	useEffect(() => {
-		const getAllCycles = async () => {
-			const ahah = await PomodoroService.getSessions()
-			setSession(ahah);
-		}
-		getAllCycles()
-
-	}, [isSessionEnded, endSession])
-
-	useEffect(() => {
-
-
 		if (props.visible) {
-			// Close the sidebar
 			Animated.timing(sidebarAnim, {
 				toValue: -SCREEN_WIDTH,
 				duration: 300,
 				useNativeDriver: true,
 			}).start();
 		} else {
-			// Open the sidebar
 			Animated.timing(sidebarAnim, {
-				toValue: 0 - 60,
+				toValue: 0,
 				duration: 300,
 				useNativeDriver: true,
 			}).start();
 		}
 		setSidebarOpen(!props.visible);
 	})
-
-
 
 	return (
 		<View style={styles.container}>
@@ -66,16 +56,22 @@ const SlideSidebar = (props: Props) => {
 					{ transform: [{ translateX: sidebarAnim }] },
 				]}
 			>
+				<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+					<OpenCloseButton onPress={onCloseSidebar} component={<ArrowLeft color={"black"} size={30}></ArrowLeft>}></OpenCloseButton>
+					<Text style={{ fontSize: 20, justifyContent: "flex-start" }}>H I S T O R Y</Text>
+					<View style={{ width: 70 }}></View>
+				</View>
+
 				<ScrollView contentContainerStyle={styles.scrollViewContent}>
-					{session.map((session, index) => (
+
+					{completedSessions.map((session, index) => (
 						<OldCycle
 							key={index}
 							workTime={session.workTime}
 							sessions={session.sessions}
-							date=""
+							date={session.date}
 						/>
 					))}
-					{/* You can add as many <OldCycle /> components as you like */}
 				</ScrollView>
 			</Animated.View>
 		</View>
@@ -85,7 +81,7 @@ const SlideSidebar = (props: Props) => {
 const styles = StyleSheet.create({
 	container: {
 		position: 'absolute',
-		width: 80,
+		width: SCREEN_WIDTH,
 		height: 700,
 
 	},
@@ -93,14 +89,13 @@ const styles = StyleSheet.create({
 		position: 'absolute',
 		display: "flex",
 		flexDirection: "column",
-		left: -100,
 		zIndex: 2,
 		top: 0,
 		bottom: 0,
 		alignItems: "center",
-		width: SCREEN_WIDTH * 0.6, // Sidebar width is 80% of screen width
+		width: SCREEN_WIDTH, // Sidebar width is 80% of screen width
+		height: SCREEN_HEIGHT,
 		backgroundColor: '#f0f0f0',
-		padding: 10,
 		elevation: 5, // For shadow effect on Android
 		shadowColor: '#000', // For shadow effect on iOS
 		shadowOffset: { width: 0, height: 2 },

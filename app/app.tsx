@@ -12,12 +12,9 @@ import PlayButton from "@/components/PlayButton";
 import TimerTypePopup from "@/components/Modal/TimerTypePopup";
 import SlideSidebar from "@/components/SlidingSlidebar";
 import { PomodoroContext } from "@/providers/PomodoroProvider";
-import { PomodoroService } from "@/services/PomodoroService";
-import { setupDatabaseAsync } from "@/storage.tsx/db";
 
 
 function App() {
-	PomodoroService.getSomething();
 	const [bool, setBool] = useState(false);
 	const { createNewSession, endSession } = useContext(PomodoroContext);
 
@@ -26,14 +23,11 @@ function App() {
 		setIsModalVisible(!isModalVisible);
 	};
 	const [isSidingBarVisible, setSidingBarVisible] = React.useState(true);
-	const setSidingBar = (isVisible: boolean) => {
-		setSidingBarVisible(!isSidingBarVisible);
-	};
+
 
 	const wtf = () => {
 		endSession()
 	}
-
 
 	return (
 		<View
@@ -43,12 +37,13 @@ function App() {
 				alignItems: "center",
 			}}
 		>
-			<View style={{ position: 'absolute', top: 70, right: 40 }}>
-				<OpenCloseButton onPress={() => setSidingBar(!isSidingBarVisible)} component={<AlignJustifyIcon color={"black"} size={30} ></AlignJustifyIcon>}></OpenCloseButton>
+			<View style={{ position: 'absolute', top: 70, left: 20 }}>
+				<OpenCloseButton onPress={() => setSidingBarVisible(false)} component={<AlignJustifyIcon color={"black"} size={30} ></AlignJustifyIcon>}></OpenCloseButton>
 			</View>
-			<SlideSidebar visible={isSidingBarVisible}></SlideSidebar>
+			<SlideSidebar setVisible={setSidingBarVisible} visible={isSidingBarVisible}></SlideSidebar>
 			<Pomodoro onClick={bool} />
 			<View style={{ display: "flex", flexDirection: "row", alignItems: "center", marginLeft: 10 }}>
+				<View style={{ width: 70 }}></View>
 				<PlayButton />
 				<View style={{ marginLeft: 10 }}>
 					<OpenCloseButton
@@ -73,7 +68,6 @@ function App() {
 	);
 }
 
-
 const styles = StyleSheet.create({
 	popupButtonContainer: {
 		position: "absolute",
@@ -81,6 +75,5 @@ const styles = StyleSheet.create({
 		backgroundColor: "black",
 	},
 });
-
 
 export default App;

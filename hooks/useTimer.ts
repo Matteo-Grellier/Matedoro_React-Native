@@ -34,7 +34,7 @@ export function useTimer(onTimerEnd?: () => void): {
 	stopTimer(): void;
 	timerOver(): void;
 } {
-	const [timeLeft, setTimeLeft] = useState(1500000);
+	const [timeLeft, setTimeLeft] = useState(30000);
 	const [elapsedTime, setElapsedTime] = useState(0);
 	const [isRunning, setIsRunning] = useState(false);
 
@@ -65,21 +65,12 @@ export function useTimer(onTimerEnd?: () => void): {
 					return prev - 1000;
 				});
 				setElapsedTime((prev) => prev + 1000);
-			}, 300);
+			}, 100);
 
 			// Nettoyage pour éviter les fuites de mémoire
 			return () => clearInterval(id);
 		}
 	}, [isRunning]);
-
-	// useEffect(() => {
-	// 	if (timeLeft === 0 && isRunning) {
-	// 		setIsRunning(false); // Stop the timer if it reaches zero
-	// 		if (onEnd) {
-	// 			onEnd(); // Trigger the callback when timer ends
-	// 		}
-	// 	}
-	// }, [timeLeft, isRunning, onEnd]);
 
 	return {
 		timeLeft: getTimeDiff(timeLeft),

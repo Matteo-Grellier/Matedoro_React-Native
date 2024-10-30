@@ -16,7 +16,6 @@ export default function (props: popupProps) {
 
 	const changeType25 = () => {
 		createNewSession(1500000, 300000)
-		// createNewSession(5000, 3000)
 		setIsLong(false)
 	};
 
@@ -28,7 +27,7 @@ export default function (props: popupProps) {
 	return (
 		<Modal animationType="slide" transparent={true} visible={props.isModalVisible}>
 			<View style={{
-				backgroundColor: "grey",
+				backgroundColor: "white",
 				width: "100%",
 				height: "50%",
 				bottom: 0,
@@ -41,8 +40,6 @@ export default function (props: popupProps) {
 						flex: 1,
 						display: "flex",
 						alignItems: "center",
-						backgroundColor: "grey",
-						borderRadius: 50,
 					}}
 				>
 					<View style={{ top: -50 }}>

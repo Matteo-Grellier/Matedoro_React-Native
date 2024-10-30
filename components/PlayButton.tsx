@@ -18,8 +18,6 @@ export default function () {
 		}
 	}, [isRunning, startTimer, stopTimer]);
 
-
-
 	return (
 		<Pressable style={styles.Button} onPress={toggleButton}>
 			{isRunning ? (
