@@ -55,7 +55,6 @@ const styles = StyleSheet.create({
 		borderRadius: 200,
 		width: 250,
 		height: 250,
-		backgroundColor: "white",
 		marginBottom: 50,
 		display: "flex",
 		justifyContent: "space-around",

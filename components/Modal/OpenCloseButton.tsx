@@ -11,8 +11,6 @@ export default function (props: Props) {
 		<View>
 			<TouchableOpacity
 				style={{
-					borderWidth: 1,
-					borderColor: "black",
 					alignItems: "center",
 					justifyContent: "center",
 					width: 70,

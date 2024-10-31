@@ -8,15 +8,15 @@ type Props = {
 
 export default function (props: Props) {
 	return (
-		<View style={{ paddingBottom: 50 }}>
+		<View style={{ paddingBottom: 30 }}>
 			<TouchableOpacity
 				style={{
 					borderWidth: 1,
 					borderColor: "black",
 					alignItems: "center",
 					justifyContent: "center",
-					paddingRight: 30,
-					paddingLeft: 30,
+					paddingRight: 20,
+					paddingLeft: 20,
 					top: 100,
 					right: 0,
 					height: 70,
@@ -28,7 +28,7 @@ export default function (props: Props) {
 				}}
 				onPress={props.onPress}
 			>
-				<Text style={{ fontSize: 25 }}>{props.buttonText}</Text>
+				<Text style={{ fontSize: 15 }}>{props.buttonText}</Text>
 			</TouchableOpacity>
 		</View>
 	);

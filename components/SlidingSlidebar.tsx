@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useContext } from 'react';
+import React, { useState, useRef, useEffect, useContext } from "react";
 import {
 	View,
 	Text,
@@ -7,29 +7,30 @@ import {
 	StyleSheet,
 	Dimensions,
 	ScrollView,
-} from 'react-native';
-import OldCycle from './OldCycle';
-import { PomodoroContext } from '@/providers/PomodoroProvider';
-import OpenCloseButton from './Modal/OpenCloseButton';
-import { ArrowLeft } from 'lucide-react-native';
+} from "react-native";
+import OldCycle from "./OldCycle";
+import { PomodoroContext } from "@/providers/PomodoroProvider";
+import OpenCloseButton from "./Modal/OpenCloseButton";
+import { ArrowLeft, ChevronLeft } from "lucide-react-native";
+import HistoryButton from "./HistoryButton";
 
 // Get the device width
-const SCREEN_WIDTH = Dimensions.get('window').width;
-const SCREEN_HEIGHT = Dimensions.get('window').height;
+const SCREEN_WIDTH = Dimensions.get("window").width;
+const SCREEN_HEIGHT = Dimensions.get("window").height;
 
 type Props = {
-	visible: boolean
-	setVisible: (visible: boolean) => void
-}
+	visible: boolean;
+	setVisible: (visible: boolean) => void;
+};
 
 const SlideSidebar = (props: Props) => {
 	const [isSidebarOpen, setSidebarOpen] = useState(false);
 	const sidebarAnim = useRef(new Animated.Value(-SCREEN_WIDTH)).current;
-	const { completedSessions, createNewSession, endSession, isSessionEnded } = useContext(PomodoroContext);
+	const { completedSessions } = useContext(PomodoroContext);
 
 	const onCloseSidebar = () => {
 		props.setVisible(true);
-	}
+	};
 
 	useEffect(() => {
 		if (props.visible) {
@@ -46,7 +47,7 @@ const SlideSidebar = (props: Props) => {
 			}).start();
 		}
 		setSidebarOpen(!props.visible);
-	})
+	});
 
 	return (
 		<View style={styles.container}>
@@ -56,23 +57,49 @@ const SlideSidebar = (props: Props) => {
 					{ transform: [{ translateX: sidebarAnim }] },
 				]}
 			>
-				<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
-					<OpenCloseButton onPress={onCloseSidebar} component={<ArrowLeft color={"black"} size={30}></ArrowLeft>}></OpenCloseButton>
-					<Text style={{ fontSize: 20, justifyContent: "flex-start" }}>H I S T O R Y</Text>
-					<View style={{ width: 70 }}></View>
+				<View
+					style={{
+						flexDirection: "row",
+						alignItems: "center",
+						justifyContent: "space-between",
+						width: "100%",
+					}}
+				>
+					<View style={{ top: 20, left: 20 }}>
+						<HistoryButton
+							onPress={onCloseSidebar}
+							icon=<ChevronLeft
+								color={"black"}
+								size={30}
+							></ChevronLeft>
+						></HistoryButton>
+					</View>
+
+					<Text
+						style={{
+							fontSize: 20,
+							justifyContent: "flex-start",
+							top: 20,
+						}}
+					>
+						H I S T O R Y
+					</Text>
+					<View style={{ width: 20 }}></View>
 				</View>
-
-				<ScrollView contentContainerStyle={styles.scrollViewContent}>
-
-					{completedSessions.map((session, index) => (
-						<OldCycle
-							key={index}
-							workTime={session.workTime}
-							sessions={session.sessions}
-							date={session.date}
-						/>
-					))}
-				</ScrollView>
+				<View style={{ top: 30 }}>
+					<ScrollView
+						contentContainerStyle={styles.scrollViewContent}
+					>
+						{completedSessions.map((session, index) => (
+							<OldCycle
+								key={index}
+								workTime={session.workTime}
+								sessions={session.sessions}
+								date={session.date}
+							/>
+						))}
+					</ScrollView>
+				</View>
 			</Animated.View>
 		</View>
 	);
@@ -80,13 +107,13 @@ const SlideSidebar = (props: Props) => {
 
 const styles = StyleSheet.create({
 	container: {
-		position: 'absolute',
+		position: "absolute",
 		width: SCREEN_WIDTH,
-		height: 700,
-
+		height: SCREEN_HEIGHT,
+		top: 50,
 	},
 	sidebar: {
-		position: 'absolute',
+		position: "absolute",
 		display: "flex",
 		flexDirection: "column",
 		zIndex: 2,
@@ -95,17 +122,12 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		width: SCREEN_WIDTH, // Sidebar width is 80% of screen width
 		height: SCREEN_HEIGHT,
-		backgroundColor: '#f0f0f0',
-		elevation: 5, // For shadow effect on Android
-		shadowColor: '#000', // For shadow effect on iOS
-		shadowOffset: { width: 0, height: 2 },
-		shadowOpacity: 0.8,
-		shadowRadius: 4,
+		backgroundColor: "#f0f0f0",
 		borderBottomRightRadius: 20,
-		borderTopRightRadius: 20
+		borderTopRightRadius: 20,
 	},
 	scrollViewContent: {
-		alignItems: 'center', // Align items centrally
+		alignItems: "center", // Align items centrally
 		paddingBottom: 20, // Add some padding at the bottom for a nice scrolling feel
 	},
 });

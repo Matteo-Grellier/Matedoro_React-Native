@@ -26,8 +26,6 @@ enum PomodoroState {
 	NONE,
 }
 
-
-
 export function Cycle() {
 	const { cycleNumber, pomodoroState } = useContext(PomodoroContext);
 
@@ -36,10 +34,10 @@ export function Cycle() {
 		listOfCycle.push(
 			<DiamondIcon
 				key={i}
-				color={"red"}
+				color={"black"}
 				size={10}
 				style={
-					(pomodoroState == PomodoroState.FOCUS || PomodoroState.PAUSE)
+					pomodoroState == PomodoroState.FOCUS || PomodoroState.PAUSE
 						? styles.square
 						: cycleNumber >= i
 							? styles.fullDiamond
@@ -57,24 +55,23 @@ export function Cycle() {
 				.map((_, key) => (
 					<DiamondIcon
 						key={key}
-						color={"red"}
+						color={"black"}
 						size={10}
 						fill={
-							(pomodoroState ==
-								PomodoroState.FOCUS || PomodoroState.PAUSE) &&
-								cycleNumber > key
-								? "red"
-								: (pomodoroState ==
-									PomodoroState.FOCUS ||
-									PomodoroState.PAUSE) &&
-									cycleNumber == key
-									? "black"
+							(pomodoroState == PomodoroState.FOCUS ||
+								PomodoroState.PAUSE) &&
+							cycleNumber > key
+								? "black"
+								: (pomodoroState == PomodoroState.FOCUS ||
+											PomodoroState.PAUSE) &&
+									  cycleNumber == key
+									? "white"
 									: "white"
 						}
 						style={
-							(pomodoroState ==
-								PomodoroState.FOCUS || PomodoroState.PAUSE) &&
-								cycleNumber > key
+							(pomodoroState == PomodoroState.FOCUS ||
+								PomodoroState.PAUSE) &&
+							cycleNumber > key
 								? styles.fullDiamond
 								: key <= cycleNumber
 									? styles.square

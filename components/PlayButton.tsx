@@ -1,12 +1,11 @@
 import { PomodoroContext } from "@/providers/PomodoroProvider";
 import { PauseIcon, PlayIcon } from "lucide-react-native";
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import {
-	StyleSheet, Pressable
-} from "react-native";
+import { StyleSheet, Pressable } from "react-native";
 
 export default function () {
-	const { startTimer, stopTimer, isRunning, isSessionEnded, setIsRunning } = useContext(PomodoroContext);
+	const { startTimer, stopTimer, isRunning, isSessionEnded, setIsRunning } =
+		useContext(PomodoroContext);
 
 	const toggleButton = useCallback(() => {
 		if (isRunning) {
@@ -21,9 +20,9 @@ export default function () {
 	return (
 		<Pressable style={styles.Button} onPress={toggleButton}>
 			{isRunning ? (
-				<PauseIcon size={40} color={"black"} />
+				<PauseIcon size={30} color={"black"} />
 			) : (
-				<PlayIcon size={40} color={"black"} />
+				<PlayIcon size={30} color={"black"} />
 			)}
 		</Pressable>
 	);
@@ -31,13 +30,15 @@ export default function () {
 
 const styles = StyleSheet.create({
 	Button: {
-		borderColor: "black",
-		borderRadius: 15,
-		borderWidth: 2,
-		width: 100,
-		height: 100,
-		display: "flex",
-		justifyContent: "center",
 		alignItems: "center",
+		justifyContent: "center",
+		width: 70,
+		height: 70,
+		backgroundColor: "white",
+		borderWidth: 2,
+		borderRadius: 15,
+		shadowColor: "black",
+		shadowOpacity: 1,
+		elevation: 5,
 	},
 });

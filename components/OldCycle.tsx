@@ -1,9 +1,6 @@
-import { PomodoroContext } from '@/providers/PomodoroProvider';
-import React, { useContext } from 'react';
-import {
-	View,
-	Text, StyleSheet, Dimensions
-} from 'react-native';
+import { PomodoroContext } from "@/providers/PomodoroProvider";
+import React, { useContext } from "react";
+import { View, Text, StyleSheet, Dimensions } from "react-native";
 
 type StatsProps = {
 	workTime: string;
@@ -11,12 +8,15 @@ type StatsProps = {
 	date: Date;
 };
 
-const SCREEN_WIDTH = Dimensions.get('window').width;
+const SCREEN_WIDTH = Dimensions.get("window").width;
 
 export default ({ workTime, sessions, date }: StatsProps) => {
-	var options: Intl.DateTimeFormatOptions = { month: 'numeric', day: 'numeric' };
-
-	const newDateAndMonth = date.toLocaleDateString("fr-FR", options)
+	var options: Intl.DateTimeFormatOptions = {
+		month: "numeric",
+		day: "numeric",
+	};
+	console.log(date);
+	const newDateAndMonth = date.toLocaleDateString("fr-FR", options);
 
 	const year = date.getFullYear();
 
@@ -26,16 +26,15 @@ export default ({ workTime, sessions, date }: StatsProps) => {
 				<Text style={styles.text}>{newDateAndMonth}</Text>
 				<Text style={styles.text}>{year}</Text>
 			</View>
-			<View style={{ alignItems: "center" }} >
+			<View style={{ alignItems: "center" }}>
 				<Text style={styles.text}>{sessions}</Text>
 				<Text style={styles.title}>cycles</Text>
-
 			</View>
 			<View style={{ alignItems: "center" }}>
 				<Text style={styles.text}>{workTime}</Text>
 				<Text style={styles.title}>focus time</Text>
 			</View>
-		</View >
+		</View>
 	);
 };
 
@@ -54,6 +53,5 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 	},
 	text: { fontSize: 15, justifyContent: "center", fontWeight: "800" },
-	title: { fontWeight: "400" }
-
-})
+	title: { fontWeight: "400" },
+});
