@@ -1,5 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { useCallback, useEffect, useState } from "react";
 
 export type TUseTimer = {
 	hours: string;
@@ -17,11 +16,11 @@ const formatNumber = (num: number) => {
 
 export const getTimeDiff = (diffInMSec: number): TUseTimer => {
 	let diff = diffInMSec;
-	const hours = Math.floor(diff / HOURS_IN_MS); // Give remaining hours
-	diff -= hours * HOURS_IN_MS; // Subtract hours
-	const minutes = Math.floor(diff / MIN_IN_MS); // Give remaining minutes
-	diff -= minutes * MIN_IN_MS; // Subtract minutes
-	const seconds = Math.floor(diff / SEC_IN_MS); // Give remaining seconds
+	const hours = Math.floor(diff / HOURS_IN_MS);
+	diff -= hours * HOURS_IN_MS;
+	const minutes = Math.floor(diff / MIN_IN_MS);
+	diff -= minutes * MIN_IN_MS;
+	const seconds = Math.floor(diff / SEC_IN_MS);
 	return {
 		hours: formatNumber(hours),
 		minutes: formatNumber(minutes),
@@ -84,6 +83,5 @@ export function useTimer(onTimerEnd?: () => void): {
 		stopTimer,
 		timerOver,
 		setElapsedTime,
-
 	};
 }

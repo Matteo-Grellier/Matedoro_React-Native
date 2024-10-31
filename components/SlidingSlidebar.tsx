@@ -3,15 +3,13 @@ import {
 	View,
 	Text,
 	Animated,
-	TouchableOpacity,
 	StyleSheet,
 	Dimensions,
 	ScrollView,
 } from "react-native";
 import OldCycle from "./OldCycle";
 import { PomodoroContext } from "@/providers/PomodoroProvider";
-import OpenCloseButton from "./Modal/OpenCloseButton";
-import { ArrowLeft, ChevronLeft } from "lucide-react-native";
+import { ChevronLeft } from "lucide-react-native";
 import HistoryButton from "./HistoryButton";
 
 // Get the device width
@@ -120,15 +118,15 @@ const styles = StyleSheet.create({
 		top: 0,
 		bottom: 0,
 		alignItems: "center",
-		width: SCREEN_WIDTH, // Sidebar width is 80% of screen width
+		width: SCREEN_WIDTH,
 		height: SCREEN_HEIGHT,
 		backgroundColor: "#f0f0f0",
 		borderBottomRightRadius: 20,
 		borderTopRightRadius: 20,
 	},
 	scrollViewContent: {
-		alignItems: "center", // Align items centrally
-		paddingBottom: 20, // Add some padding at the bottom for a nice scrolling feel
+		alignItems: "center",
+		paddingBottom: 20,
 	},
 });
 

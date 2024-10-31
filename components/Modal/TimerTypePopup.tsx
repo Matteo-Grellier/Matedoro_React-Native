@@ -1,12 +1,8 @@
-import { Modal, View, Text, Button } from "react-native";
+import { Modal, View, Text } from "react-native";
 import {
-	ArrowDown,
-	ChevronDown,
-	MinusIcon,
-	PlusIcon,
+	ChevronDown
 } from "lucide-react-native";
 import ChangeTimerType from "./ChangeTimerType";
-import OpenCloseButton from "./OpenCloseButton";
 import { PomodoroContext } from "@/providers/PomodoroProvider";
 import { useContext } from "react";
 import HistoryButton from "../HistoryButton";
@@ -18,7 +14,7 @@ type popupProps = {
 
 export default function (props: popupProps) {
 	const handleModal = () => props.setModalVisible(!props.isModalVisible);
-	const { setTimeLeft, setIsLong, createNewSession } =
+	const { setIsLong, createNewSession } =
 		useContext(PomodoroContext);
 
 	const changeType25 = () => {

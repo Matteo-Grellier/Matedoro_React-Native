@@ -1,13 +1,11 @@
 import { View, StyleSheet } from "react-native";
 import { Pomodoro } from "@/components/Pomodoro";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import {
-	AlignJustifyIcon,
 	HistoryIcon,
 	PlusIcon,
-	TimerOff,
+	TimerOff
 } from "lucide-react-native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 import OpenCloseButton from "@/components/Modal/OpenCloseButton";
 import PlayButton from "@/components/PlayButton";
@@ -25,10 +23,6 @@ function App() {
 		setIsModalVisible(!isModalVisible);
 	};
 	const [isSidingBarVisible, setSidingBarVisible] = React.useState(true);
-
-	const wtf = () => {
-		endSession();
-	};
 
 	return (
 		<View
@@ -62,7 +56,7 @@ function App() {
 				<View style={{ marginLeft: 20 }}>
 					<HistoryButton
 						icon={<TimerOff size={30} color={"black"} />}
-						onPress={wtf}
+						onPress={endSession}
 					></HistoryButton>
 				</View>
 			</View>

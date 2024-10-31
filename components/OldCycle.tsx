@@ -1,5 +1,4 @@
-import { PomodoroContext } from "@/providers/PomodoroProvider";
-import React, { useContext } from "react";
+import React from "react";
 import { View, Text, StyleSheet, Dimensions } from "react-native";
 
 type StatsProps = {

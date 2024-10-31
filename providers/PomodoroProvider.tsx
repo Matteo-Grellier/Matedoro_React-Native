@@ -7,7 +7,7 @@ import {
 	useState,
 } from "react";
 import * as Notifications from "expo-notifications";
-import { Platform, Vibration } from "react-native";
+import { Vibration } from "react-native";
 import { Audio } from "expo-av";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -29,7 +29,7 @@ type PomodoroProviderState = {
 	stopTimer: () => void;
 	setTimeLeft: (time: number) => void;
 	endSession: () => void;
-	completedSessions: CompletedSession[]; // Array
+	completedSessions: CompletedSession[];
 	isSessionEnded: boolean;
 	setIsRunning: (bool: boolean) => void;
 };
@@ -42,19 +42,19 @@ enum PomodoroState {
 
 const initialState: PomodoroProviderState = {
 	isFocus: true,
-	timeLeft: { minutes: "25", seconds: "00" },
+	timeLeft: { minutes: "25", seconds: "00", hours: "00" },
 	isRunning: false,
 	cycleNumber: 0,
 	pomodoroState: PomodoroState.FOCUS,
-	createNewSession: (cycleFocusTime: number, cyclePausesTime: number) => { },
-	setIsLong: (isLong: boolean) => { },
+	createNewSession: (_cycleFocusTime: number, _cyclePausesTime: number) => { },
+	setIsLong: (_isLong: boolean) => { },
 	startTimer: () => { },
 	stopTimer: () => { },
-	setTimeLeft: (timer: number) => { },
+	setTimeLeft: (_timer: number) => { },
 	endSession: () => { },
 	completedSessions: [],
 	isSessionEnded: false,
-	setIsRunning: (bool: boolean) => { },
+	setIsRunning: (_bool: boolean) => { },
 };
 
 enum cycleType {
@@ -204,7 +204,7 @@ export const PomodoroProvider = ({ children }: PomodoroProviderProps) => {
 
 	const createNewSession = (
 		cycleFocusTime: number,
-		cyclePausesTime: number,
+		_cyclePausesTime: number,
 	) => {
 		setPomodoroState(PomodoroState.FOCUS);
 		setIsFocus(true);

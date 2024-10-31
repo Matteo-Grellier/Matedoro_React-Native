@@ -1,6 +1,5 @@
-import { useTimer } from "@/hooks/useTimer";
-import { EyeIcon, FeatherIcon, FileX } from "lucide-react-native";
-import React, { useEffect, useState } from "react";
+import { EyeIcon, FeatherIcon } from "lucide-react-native";
+import React from "react";
 import { StyleSheet, View, Text } from "react-native";
 
 type TUseTimer = {

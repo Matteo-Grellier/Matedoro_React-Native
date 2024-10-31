@@ -1,5 +1,4 @@
-import { PlusIcon } from "lucide-react-native";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
+import { View, TouchableOpacity } from "react-native";
 
 type Props = {
 	onPress?: () => void;

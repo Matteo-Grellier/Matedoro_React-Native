@@ -1,23 +1,11 @@
 import { PomodoroContext } from "@/providers/PomodoroProvider";
 import {
 	DiamondIcon,
-	Fullscreen,
-	LucideEye,
-	PauseIcon,
-	Play,
-	PlayIcon,
-	Square,
-	SquareIcon,
 } from "lucide-react-native";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import {
 	StyleSheet,
-	Button,
 	View,
-	SafeAreaView,
-	Text,
-	Alert,
-	Pressable,
 } from "react-native";
 
 enum PomodoroState {
@@ -60,18 +48,18 @@ export function Cycle() {
 						fill={
 							(pomodoroState == PomodoroState.FOCUS ||
 								PomodoroState.PAUSE) &&
-							cycleNumber > key
+								cycleNumber > key
 								? "black"
 								: (pomodoroState == PomodoroState.FOCUS ||
-											PomodoroState.PAUSE) &&
-									  cycleNumber == key
+									PomodoroState.PAUSE) &&
+									cycleNumber == key
 									? "white"
 									: "white"
 						}
 						style={
 							(pomodoroState == PomodoroState.FOCUS ||
 								PomodoroState.PAUSE) &&
-							cycleNumber > key
+								cycleNumber > key
 								? styles.fullDiamond
 								: key <= cycleNumber
 									? styles.square

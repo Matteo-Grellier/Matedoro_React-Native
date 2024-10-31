@@ -1,6 +1,6 @@
 import { PomodoroContext } from "@/providers/PomodoroProvider";
 import { PauseIcon, PlayIcon } from "lucide-react-native";
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext } from "react";
 import { StyleSheet, Pressable } from "react-native";
 
 export default function () {

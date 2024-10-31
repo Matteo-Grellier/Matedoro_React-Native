@@ -1,7 +1,6 @@
 import { View, TouchableOpacity, Text } from "react-native";
 
 type Props = {
-	// title: string;
 	onPress: () => void;
 	buttonText: string;
 };

@@ -1,4 +1,3 @@
-import { AlignJustifyIcon, ChevronLeft } from "lucide-react-native";
 import { TouchableOpacity, StyleSheet, View } from "react-native";
 
 type props = {
