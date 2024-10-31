@@ -59,7 +59,6 @@ export function useTimer(onTimerEnd?: () => void): {
 
 	useEffect(() => {
 		if (isRunning) {
-
 			const id = setInterval(() => {
 				setTimeLeft((prev) => {
 					if (prev <= 1000) {
@@ -68,8 +67,7 @@ export function useTimer(onTimerEnd?: () => void): {
 					return prev - 1000;
 				});
 				setElapsedTime((prev) => prev + 1000);
-			}, 100);
-
+			}, 1000);
 			return () => clearInterval(id);
 		}
 	}, [isRunning]);

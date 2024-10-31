@@ -27,6 +27,11 @@ export default function (props: popupProps) {
 		setIsLong(true);
 	};
 
+	const changeType10 = () => {
+		createNewSession(10000, 5000);
+		setIsLong(true);
+	};
+
 	return (
 		<Modal
 			animationType="slide"
@@ -63,13 +68,13 @@ export default function (props: popupProps) {
 							onPress={handleModal}
 						/>
 						<Text
-							style={{ fontSize: 22, fontWeight: "800", top: 60 }}
+							style={{ fontSize: 22, fontWeight: "800", top: 24 }}
 						>
 							Choose your session duration
 						</Text>
 					</View>
 
-					<View style={{ bottom: -35 }}>
+					<View style={{ top: -28 }}>
 						<ChangeTimerType
 							buttonText="25min / 5min"
 							onPress={changeType25}
@@ -77,6 +82,10 @@ export default function (props: popupProps) {
 						<ChangeTimerType
 							buttonText="45min / 15min"
 							onPress={changeType45}
+						/>
+						<ChangeTimerType
+							buttonText="10sec / 5sec"
+							onPress={changeType10}
 						/>
 					</View>
 				</View>

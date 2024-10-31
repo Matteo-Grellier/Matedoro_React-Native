@@ -204,7 +204,7 @@ export const PomodoroProvider = ({ children }: PomodoroProviderProps) => {
 
 	const createNewSession = (
 		cycleFocusTime: number,
-		_cyclePausesTime: number,
+		cyclePauseTime: number,
 	) => {
 		setPomodoroState(PomodoroState.FOCUS);
 		setIsFocus(true);
@@ -217,7 +217,6 @@ export const PomodoroProvider = ({ children }: PomodoroProviderProps) => {
 			"New Pomodoro Session!",
 			"A new Pomodoro session has started! Get ready to focus.",
 		);
-		addToHistory();
 		setTotalCycleNumber(0);
 	};
 
