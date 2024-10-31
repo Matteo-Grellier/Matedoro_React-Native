@@ -5,20 +5,22 @@ import { View, Text, StyleSheet, Dimensions } from "react-native";
 type StatsProps = {
 	workTime: string;
 	sessions: number;
-	date: Date;
+	date: string;
 };
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 export default ({ workTime, sessions, date }: StatsProps) => {
+	const newDate = new Date();
+	const timeStamp = newDate.getTime()
+	const reAddedDate = new Date(timeStamp)
 	var options: Intl.DateTimeFormatOptions = {
 		month: "numeric",
 		day: "numeric",
 	};
-	console.log(date);
-	const newDateAndMonth = date.toLocaleDateString("fr-FR", options);
+	const newDateAndMonth = reAddedDate.toLocaleDateString("fr-FR", options);
 
-	const year = date.getFullYear();
+	const year = reAddedDate.getFullYear();
 
 	return (
 		<View style={styles.container}>

@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { StyleSheet, View, Text } from "react-native";
+
 export type TUseTimer = {
+	hours: string;
 	minutes: string;
 	seconds: string;
 };
@@ -13,7 +15,7 @@ const formatNumber = (num: number) => {
 	return num < 10 ? `0${num}` : `${num}`;
 };
 
-const getTimeDiff = (diffInMSec: number): TUseTimer => {
+export const getTimeDiff = (diffInMSec: number): TUseTimer => {
 	let diff = diffInMSec;
 	const hours = Math.floor(diff / HOURS_IN_MS); // Give remaining hours
 	diff -= hours * HOURS_IN_MS; // Subtract hours
@@ -21,6 +23,7 @@ const getTimeDiff = (diffInMSec: number): TUseTimer => {
 	diff -= minutes * MIN_IN_MS; // Subtract minutes
 	const seconds = Math.floor(diff / SEC_IN_MS); // Give remaining seconds
 	return {
+		hours: formatNumber(hours),
 		minutes: formatNumber(minutes),
 		seconds: formatNumber(seconds),
 	};
@@ -33,23 +36,24 @@ export function useTimer(onTimerEnd?: () => void): {
 	startTimer(): void;
 	stopTimer(): void;
 	timerOver(): void;
+	setElapsedTime(num: number): void;
+	elapsedTimeNumber: number;
 } {
 	const [timeLeft, setTimeLeft] = useState(30000);
 	const [elapsedTime, setElapsedTime] = useState(0);
 	const [isRunning, setIsRunning] = useState(false);
 
 	const timerOver = () => {
+		setElapsedTime(0);
 		if (onTimerEnd) {
 			onTimerEnd();
 		}
 	}
 
-	// Fonction pour démarrer le timer
 	const startTimer = useCallback(() => {
 		setIsRunning(true);
 	}, []);
 
-	// Fonction pour arrêter le timer
 	const stopTimer = useCallback(() => {
 		setIsRunning(false);
 	}, []);
@@ -67,7 +71,6 @@ export function useTimer(onTimerEnd?: () => void): {
 				setElapsedTime((prev) => prev + 1000);
 			}, 100);
 
-			// Nettoyage pour éviter les fuites de mémoire
 			return () => clearInterval(id);
 		}
 	}, [isRunning]);
@@ -75,9 +78,12 @@ export function useTimer(onTimerEnd?: () => void): {
 	return {
 		timeLeft: getTimeDiff(timeLeft),
 		elapsedTime: getTimeDiff(elapsedTime),
+		elapsedTimeNumber: elapsedTime,
 		setTimeLeft,
 		startTimer,
 		stopTimer,
 		timerOver,
+		setElapsedTime,
+
 	};
 }

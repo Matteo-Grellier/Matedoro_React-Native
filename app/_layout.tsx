@@ -8,8 +8,8 @@ export const unstable_settings = {
 export default function RootLayout() {
 	return (
 		<PomodoroProvider>
-			<Stack>
-				<Stack.Screen name="app" options={{ headerShown: false }} />
+			<Stack screenOptions={{ headerShown: false }}>
+				<Stack.Screen name="app" options={{ headerShown: false, navigationBarHidden: true }} />
 			</Stack>
 		</PomodoroProvider>
 	);
